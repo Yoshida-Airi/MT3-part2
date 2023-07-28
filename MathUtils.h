@@ -11,6 +11,7 @@ struct  Sphere
 {
 	Vector3 center;//中心点
 	float radius; //半径
+	uint32_t color;
 };
 
 struct Segment
@@ -18,6 +19,9 @@ struct Segment
 	Vector3 origin;
 	Vector3 diff;
 };
+
+//当たり判定
+bool IsCollision(const Sphere& s1, const Sphere& s2);
 
 //加算
 Vector3 Add(const Vector3& v1, const Vector3& v2);

@@ -26,39 +26,27 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Vector3 rotate{};
 	Vector3 translate{};
 
-	Sphere sphere
-	{
-		{0,0,0,},
-		0.5f
-	};
-
 	Segment segment
 	{
 		{-2.0f,-1.0f,0.0f},
 		{3.0f,2.0f,2.0f}
 	};
 
-	Vector3 point
-	{
-		-1.5f,0.6f,0.6f
-	};
-
-	Vector3 project = Project(Subtract(point, segment.origin), segment.diff);
-	Vector3 closestPoint = ClosestPoint(point, segment);
-
-	//1cmの球を描画
-	Sphere pointSphere
-	{
-		point,0.01f
-	};
-
-	Sphere ClosestPointSphere
-	{
-		closestPoint,0.01f
-	};
-
 	
+	Sphere Sphere1
+	{
+		{0,0,0,},
+		0.6f,
+		WHITE
+		
+	};
 
+	Sphere Sphere2
+	{
+		{0,1.0f,1.0f},
+		0.4f,
+		WHITE
+	};
 
 
 
@@ -83,19 +71,28 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		Matrix4x4 ViewProjectionMatirx = Multiply(worldMatrix, Multiply(viewMatrix, projectionMatrix));
 		Matrix4x4 viewportMatrix = MakeViewportMatrix(0, 0, float(kWindowWidth), float(kWindowHeight), 0.0f, 1.0f);
 
-
-		//線分
-		Vector3 start = Transform(Transform(segment.origin, ViewProjectionMatirx), viewportMatrix);
-		Vector3 end = Transform(Transform(Add(segment.origin, segment.diff), ViewProjectionMatirx), viewportMatrix);
-	
-	
+		//当たり判定
+		if (IsCollision(Sphere1, Sphere2) == true)
+		{
+			Sphere1.color = RED;
+		}
+		else
+		{
+			Sphere1.color = WHITE;
+		}
+		
+		
+		
 
 		ImGui::Begin("Window");
-		/*ImGui::DragFloat3("CameraTranslate", &cameraTranslate.x, 0.01f);
-		ImGui::DragFloat3("CameraRotate", &cameraRotate.x, 0.01f);*/
-		ImGui::DragFloat3("point", &point.x, 0.01f);
-
-		ImGui::InputFloat3("Project", &project.x, "% .3f", ImGuiInputTextFlags_ReadOnly);
+		ImGui::DragFloat3("CameraTranslate", &cameraTranslate.x, 0.01f);
+		ImGui::DragFloat3("CameraRotate", &cameraRotate.x, 0.01f);
+	
+		ImGui::DragFloat3("sphere1Center", &Sphere1.center.x, 0.01f);
+		ImGui::DragFloat("sphere1Radius", &Sphere1.radius, 0.01f);
+		ImGui::DragFloat3("sphere2Center", &Sphere2.center.x, 0.01f);
+		ImGui::DragFloat("sphere2Radius", &Sphere2.radius, 0.01f);
+		
 		ImGui::End();
 
 
@@ -113,14 +110,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		DrawGrid(ViewProjectionMatirx, viewportMatrix);
 
 
-		//線分
-		Novice::DrawLine(int(start.x), int(start.y), int(end.x), int(end.y), WHITE);
-
-
-
 		//球
-		DrawSphere(pointSphere, ViewProjectionMatirx, viewportMatrix, RED);
-		DrawSphere(ClosestPointSphere, ViewProjectionMatirx, viewportMatrix, BLACK);
+		DrawSphere(Sphere1, ViewProjectionMatirx, viewportMatrix, Sphere1.color);
+		DrawSphere(Sphere2, ViewProjectionMatirx, viewportMatrix, Sphere2.color);
 
 
 		///

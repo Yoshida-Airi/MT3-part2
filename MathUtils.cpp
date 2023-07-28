@@ -797,3 +797,17 @@ Vector3 ClosestPoint(const Vector3& point, const Segment& segment)
 
 	return result;
 }
+
+bool IsCollision(const Sphere& s1, const Sphere& s2)
+{
+	//2つの弾の中心点間の距離を求める
+	float distance = Length(Subtract(s1.center, s2.center));
+	//半径の合計よりも短ければ衝突
+	if (distance <= s1.radius + s2.radius)
+	{
+		return	true;
+	}
+
+	return false;
+
+}
