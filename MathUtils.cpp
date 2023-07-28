@@ -769,3 +769,31 @@ void DrawSphere(const Sphere& sphere, const Matrix4x4& viewProjectionMatrix, con
 		}
 	}
 }
+
+//正射影ベクトル
+Vector3 Project(const Vector3& v1, const Vector3& v2)
+{
+	Vector3 result;
+	
+	Vector3 nor = Normalize(v2);
+	float dot = Dot(v1, nor);
+
+	result.x = dot * nor.x;
+	result.y = dot * nor.y;
+	result.z = dot * nor.z;
+
+	return result;
+}
+
+//最近接点
+Vector3 ClosestPoint(const Vector3& point, const Segment& segment)
+{
+	Vector3 result;
+	Vector3 project = Project(Subtract(point, segment.origin), segment.diff);
+
+	result.x = segment.origin.x + project.x;
+	result.y = segment.origin.y + project.y;
+	result.z = segment.origin.z + project.z;
+
+	return result;
+}

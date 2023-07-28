@@ -32,6 +32,36 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		0.5f
 	};
 
+	Segment segment
+	{
+		{-2.0f,-1.0f,0.0f},
+		{3.0f,2.0f,2.0f}
+	};
+
+	Vector3 point
+	{
+		-1.5f,0.6f,0.6f
+	};
+
+	Vector3 project = Project(Subtract(point, segment.origin), segment.diff);
+	Vector3 closestPoint = ClosestPoint(point, segment);
+
+	//1cmの球を描画
+	Sphere pointSphere
+	{
+		point,0.01f
+	};
+
+	Sphere ClosestPointSphere
+	{
+		closestPoint,0.01f
+	};
+
+	
+
+
+
+
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0) {
 		// フレームの開始
@@ -50,17 +80,24 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		Matrix4x4 cameraMatrix = MakeAffinMatrix({ 1.0f,1.0f,1.0f }, cameraRotate, cameraTranslate);
 		Matrix4x4 viewMatrix = Inverse(cameraMatrix);
 		Matrix4x4 projectionMatrix = MakePerspectiveFovMatrix(0.45f, float(kWindowWidth) / float(kWindowHeight), 0.1f, 100.0f);
-		Matrix4x4 worldViewProjectionMatirx = Multiply(worldMatrix, Multiply(viewMatrix, projectionMatrix));
+		Matrix4x4 ViewProjectionMatirx = Multiply(worldMatrix, Multiply(viewMatrix, projectionMatrix));
 		Matrix4x4 viewportMatrix = MakeViewportMatrix(0, 0, float(kWindowWidth), float(kWindowHeight), 0.0f, 1.0f);
 
 
+		//線分
+		Vector3 start = Transform(Transform(segment.origin, ViewProjectionMatirx), viewportMatrix);
+		Vector3 end = Transform(Transform(Add(segment.origin, segment.diff), ViewProjectionMatirx), viewportMatrix);
+	
+	
 
 		ImGui::Begin("Window");
-		ImGui::DragFloat3("CameraTranslate", &cameraTranslate.x, 0.01f);
-		ImGui::DragFloat3("CameraRotate", &cameraRotate.x, 0.01f);
-		ImGui::DragFloat3("SphereCenter", &sphere.center.x, 0.01f);
-		ImGui::DragFloat("SphereRadius", &sphere.radius, 0.01f);
+		/*ImGui::DragFloat3("CameraTranslate", &cameraTranslate.x, 0.01f);
+		ImGui::DragFloat3("CameraRotate", &cameraRotate.x, 0.01f);*/
+		ImGui::DragFloat3("point", &point.x, 0.01f);
+
+		ImGui::InputFloat3("Project", &project.x, "% .3f", ImGuiInputTextFlags_ReadOnly);
 		ImGui::End();
+
 
 
 		///
@@ -73,10 +110,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 
 		//グリッド線
-		DrawGrid(worldViewProjectionMatirx, viewportMatrix);
+		DrawGrid(ViewProjectionMatirx, viewportMatrix);
+
+
+		//線分
+		Novice::DrawLine(int(start.x), int(start.y), int(end.x), int(end.y), WHITE);
+
+
 
 		//球
-		DrawSphere(sphere, worldViewProjectionMatirx, viewportMatrix, WHITE);
+		DrawSphere(pointSphere, ViewProjectionMatirx, viewportMatrix, RED);
+		DrawSphere(ClosestPointSphere, ViewProjectionMatirx, viewportMatrix, BLACK);
+
 
 		///
 		/// ↑描画処理ここまで
