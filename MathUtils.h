@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include"Novice.h"
+#include"Vector2.h"
 #include"Vector3.h"
 #include"Matrix4x4.h"
 
@@ -20,8 +21,16 @@ struct Segment
 	Vector3 diff;
 };
 
+struct Plane
+{
+	Vector3 normal;	//!<法線
+	float distance;	//!<距離
+	uint32_t color;
+};
+
 //当たり判定
 bool IsCollision(const Sphere& s1, const Sphere& s2);
+bool IsCollision(const Sphere& sphere, const Plane& plane);
 
 //加算
 Vector3 Add(const Vector3& v1, const Vector3& v2);
@@ -109,3 +118,10 @@ Vector3 Project(const Vector3& v1, const Vector3& v2);
 
 //最近接点
 Vector3 ClosestPoint(const Vector3& point, const Segment& segment);
+
+//垂直なベクトルを求める関数
+Vector3 Perpendicular(const Vector3& vector);
+
+//平面
+void DrawPlane(const Plane& plane, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix);
+

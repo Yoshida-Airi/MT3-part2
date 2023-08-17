@@ -798,6 +798,44 @@ Vector3 ClosestPoint(const Vector3& point, const Segment& segment)
 	return result;
 }
 
+
+
+Vector3 Perpendicular(const Vector3& vector)
+{
+	if (vector.x != 0.0f || vector.y != 0.0f)
+	{
+		return{ -vector.y, vector.x, 0.0f };
+	}
+
+	return { 0.0f,-vector.z,vector.y };
+}
+
+//平面
+void DrawPlane(const Plane& plane, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix)
+{
+	Vector3 center = Multiply(plane.distance, plane.normal);
+
+	Vector3 perpendiclars[4];
+	perpendiclars[0] = Normalize(Perpendicular(plane.normal));
+	perpendiclars[1] = { -perpendiclars[0].x,-perpendiclars[0].y,-perpendiclars[0].z };
+	perpendiclars[2] = Cross(plane.normal, perpendiclars[0]);
+	perpendiclars[3] = { -perpendiclars[2].x,-perpendiclars[2].y, -perpendiclars[2].z };
+
+	Vector3 points[4];
+	for (int32_t index = 0; index < 4; ++index)
+	{
+		Vector3 extend = Multiply(2.0f, perpendiclars[index]);
+		Vector3 point = Add(center, extend);
+		points[index] = Transform(Transform(point, viewProjectionMatrix), viewportMatrix);
+	}
+
+	Novice::DrawLine(int(points[0].x), int(points[0].y), int(points[3].x), int(points[3].y), plane.color);
+	Novice::DrawLine(int(points[1].x), int(points[1].y), int(points[2].x), int(points[2].y), plane.color);
+	Novice::DrawLine(int(points[2].x), int(points[2].y), int(points[0].x), int(points[0].y), plane.color);
+	Novice::DrawLine(int(points[3].x), int(points[3].y), int(points[1].x), int(points[1].y), plane.color);
+
+}
+
 bool IsCollision(const Sphere& s1, const Sphere& s2)
 {
 	//2つの弾の中心点間の距離を求める
@@ -810,4 +848,14 @@ bool IsCollision(const Sphere& s1, const Sphere& s2)
 
 	return false;
 
+}
+
+bool IsCollision(const Sphere& sphere, const Plane& plane)
+{
+	float distance = fabs(Dot(plane.normal, sphere.center) - plane.distance);
+	if (distance <= sphere.radius) {
+		return true;
+	}
+	
+	return false;
 }

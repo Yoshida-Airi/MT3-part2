@@ -41,13 +41,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		
 	};
 
-	Sphere Sphere2
+
+
+	Plane plane
 	{
-		{0,1.0f,1.0f},
-		0.4f,
+		{0.0f,1.0f,0.0f},
+		1.0f,
 		WHITE
 	};
-
 
 
 	// ウィンドウの×ボタンが押されるまでループ
@@ -72,7 +73,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		Matrix4x4 viewportMatrix = MakeViewportMatrix(0, 0, float(kWindowWidth), float(kWindowHeight), 0.0f, 1.0f);
 
 		//当たり判定
-		if (IsCollision(Sphere1, Sphere2) == true)
+		if (IsCollision(Sphere1, plane) == true)
 		{
 			Sphere1.color = RED;
 		}
@@ -88,10 +89,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		ImGui::DragFloat3("CameraTranslate", &cameraTranslate.x, 0.01f);
 		ImGui::DragFloat3("CameraRotate", &cameraRotate.x, 0.01f);
 	
+		ImGui::Text("sphere");
 		ImGui::DragFloat3("sphere1Center", &Sphere1.center.x, 0.01f);
 		ImGui::DragFloat("sphere1Radius", &Sphere1.radius, 0.01f);
-		ImGui::DragFloat3("sphere2Center", &Sphere2.center.x, 0.01f);
-		ImGui::DragFloat("sphere2Radius", &Sphere2.radius, 0.01f);
+		
+		ImGui::Text("plane");
+		ImGui::DragFloat3("Plane.Normal", &plane.normal.x, 0.01f);
+		plane.normal = Normalize(plane.normal);
+		ImGui::DragFloat("Plane.Distance", &plane.distance, 0.01f);
+		
 		
 		ImGui::End();
 
@@ -109,10 +115,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//グリッド線
 		DrawGrid(ViewProjectionMatirx, viewportMatrix);
 
+		DrawPlane(plane, ViewProjectionMatirx, viewportMatrix);
 
 		//球
 		DrawSphere(Sphere1, ViewProjectionMatirx, viewportMatrix, Sphere1.color);
-		DrawSphere(Sphere2, ViewProjectionMatirx, viewportMatrix, Sphere2.color);
 
 
 		///
