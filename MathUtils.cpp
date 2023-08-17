@@ -909,7 +909,11 @@ bool IsCollision(const Triangle& triangle, const Segment& segment)
 	Vector3 v2 = Subtract(triangle.vertices[2], triangle.vertices[1]);
 	Vector3 cross = Cross(v1, v2);
 	Vector3 normal = Normalize(cross);
+
+	//法線と線の内積を求める
 	float dot = Dot(normal, segment.diff);
+
+	// 垂直=平行であるので、衝突しているはずがない
 	if (dot == 0.0f) {
 		return false;
 	}
