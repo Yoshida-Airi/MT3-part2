@@ -29,10 +29,16 @@ struct Plane
 	uint32_t color;
 };
 
+struct Triangle
+{
+	Vector3 vertices[3];
+};
+
 //当たり判定
 bool IsCollision(const Sphere& s1, const Sphere& s2);
 bool IsCollision(const Sphere& sphere, const Plane& plane);
 bool IsCollision(const Segment& segment, const Plane& plane);
+bool IsCollision(const Triangle& triangle, const Segment& segment);
 
 //加算
 Vector3 Add(const Vector3& v1, const Vector3& v2);
@@ -127,3 +133,5 @@ Vector3 Perpendicular(const Vector3& vector);
 //平面
 void DrawPlane(const Plane& plane, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix);
 
+//三角形
+void DrawTriangle(const Triangle& triangle, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color);

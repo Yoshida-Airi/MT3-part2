@@ -51,6 +51,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		WHITE
 	};
 
+	Triangle triangle;
+	triangle.vertices[0] = { -1.0f,0.0f,0.0f };
+	triangle.vertices[1] = { 0.0f,1.0f,0.0f };
+	triangle.vertices[2] = { 1.0f,0.0f,0.0f };
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0) {
@@ -80,7 +84,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 
 		//当たり判定
-		if (IsCollision(segment, plane) == true)
+		if (IsCollision(triangle, segment) == true)
 		{
 			segment.color = RED;
 		}
@@ -101,15 +105,20 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		ImGui::DragFloat3("sphere1Center", &Sphere1.center.x, 0.01f);
 		ImGui::DragFloat("sphere1Radius", &Sphere1.radius, 0.01f);*/
 
+		ImGui::Text("triangle");
+		ImGui::DragFloat3("triangle.v0", &triangle.vertices[0].x, 0.01f);
+		ImGui::DragFloat3("triangle.v1", &triangle.vertices[1].x, 0.01f);
+		ImGui::DragFloat3("triangle.v2", &triangle.vertices[2].x, 0.01f);
+
 		ImGui::Text("line");
 		ImGui::DragFloat3("Segment.Origine", &segment.origin.x, 0.01f);
 		ImGui::DragFloat3("Segment.Diff", &segment.diff.x, 0.01f);
 		
-		ImGui::Text("plane");
+		/*ImGui::Text("plane");
 		ImGui::DragFloat3("Plane.Normal", &plane.normal.x, 0.01f);
 		plane.normal = Normalize(plane.normal);
 		ImGui::DragFloat("Plane.Distance", &plane.distance, 0.01f);
-		
+		*/
 		
 		ImGui::End();
 
@@ -130,8 +139,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//線分
 		Novice::DrawLine(int(start.x), int(start.y), int(end.x), int(end.y), segment.color);
 
-		//平面
-		DrawPlane(plane, ViewProjectionMatirx, viewportMatrix);
+		//三角形
+		DrawTriangle(triangle, ViewProjectionMatirx, viewportMatrix, WHITE);
+
+
+
+		////平面
+		//DrawPlane(plane, ViewProjectionMatirx, viewportMatrix);
 
 		////球
 		//DrawSphere(Sphere1, ViewProjectionMatirx, viewportMatrix, Sphere1.color);

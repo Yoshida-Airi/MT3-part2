@@ -836,6 +836,25 @@ void DrawPlane(const Plane& plane, const Matrix4x4& viewProjectionMatrix, const 
 
 }
 
+void DrawTriangle(const Triangle& triangle, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color)
+{
+	// 頂点座標
+	Vector3 scVertices[3];
+	for (int i = 0; i < 3; ++i) {
+		Vector3 ndcVertex = Transform(triangle.vertices[i], viewProjectionMatrix);
+		scVertices[i] = Transform(ndcVertex, viewportMatrix);
+	}
+
+	// 描画
+	Novice::DrawTriangle(
+		int(scVertices[0].x), int(scVertices[0].y),
+		int(scVertices[1].x), int(scVertices[1].y),
+		int(scVertices[2].x), int(scVertices[2].y),
+		color, kFillModeWireFrame
+	);
+
+}
+
 bool IsCollision(const Sphere& s1, const Sphere& s2)
 {
 	//2つの弾の中心点間の距離を求める
@@ -882,3 +901,43 @@ bool IsCollision(const Segment& segment, const Plane& plane) {
 	return false;
 
 }
+
+
+bool IsCollision(const Triangle& triangle, const Segment& segment)
+{
+	Vector3 v1 = Subtract(triangle.vertices[1], triangle.vertices[0]);
+	Vector3 v2 = Subtract(triangle.vertices[2], triangle.vertices[1]);
+	Vector3 cross = Cross(v1, v2);
+	Vector3 normal = Normalize(cross);
+	float dot = Dot(normal, segment.diff);
+	if (dot == 0.0f) {
+		return false;
+	}
+	float d = Dot(triangle.vertices[0], normal);
+	float t = (d - Dot(segment.origin, normal) / dot);
+
+	//tの値と線の種類によって衝突しているかを判断する
+	if (t <= 1.0f && t >= 0.0f) {
+		Vector3 p = {
+			segment.origin.x + t * segment.diff.x, segment.origin.y + t * segment.diff.y,
+			segment.origin.z + t * segment.diff.z };
+		Vector3 v01 = Subtract(triangle.vertices[0], triangle.vertices[1]);
+		Vector3 v12 = Subtract(triangle.vertices[1], triangle.vertices[2]);
+		Vector3 v20 = Subtract(triangle.vertices[2], triangle.vertices[0]);
+		Vector3 v0p = Subtract(triangle.vertices[0], p);
+		Vector3 v1p = Subtract(triangle.vertices[1], p);
+		Vector3 v2p = Subtract(triangle.vertices[2], p);
+		//各辺を結んだベクトルと、頂点と衝突点pを結んだベクトルのクロス積を取る
+		Vector3 cross01 = Cross(v01, v0p);
+		Vector3 cross12 = Cross(v12, v1p);
+		Vector3 cross20 = Cross(v20, v2p);
+		//すべての小三角形のクロス積と法線が同じ方向を向いていたら衝突
+		if (Dot(cross01, normal) >= 0.0f && Dot(cross12, normal) >= 0.0f && Dot(cross20, normal) >= 0.0f) {
+			return true;
+		}
+	}
+	return false;
+
+}
+
+
