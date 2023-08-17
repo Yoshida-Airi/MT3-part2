@@ -7,6 +7,7 @@
 #include<numbers>
 #include<cmath>
 #include<assert.h>
+#include<algorithm>
 
 struct  Sphere
 {
@@ -47,7 +48,7 @@ bool IsCollision(const Sphere& sphere, const Plane& plane);
 bool IsCollision(const Segment& segment, const Plane& plane);
 bool IsCollision(const Triangle& triangle, const Segment& segment);
 bool IsCollision(const AABB& aabb1, const AABB& aabb2);
-
+bool IsCollision(const AABB& aabb, const Sphere& sphere);
 
 //加算
 Vector3 Add(const Vector3& v1, const Vector3& v2);

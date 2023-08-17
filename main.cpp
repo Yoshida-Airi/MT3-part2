@@ -101,15 +101,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		aabb1.min.z = (std::min)(aabb1.min.z, aabb1.max.z);
 		aabb1.max.z = (std::max)(aabb1.min.z, aabb1.max.z);
 
-		aabb2.min.x = (std::min)(aabb2.min.x, aabb2.max.x);
-		aabb2.max.x = (std::max)(aabb2.min.x, aabb2.max.x);
-		aabb2.min.y = (std::min)(aabb2.min.y, aabb2.max.y);
-		aabb2.max.y = (std::max)(aabb2.min.y, aabb2.max.y);
-		aabb2.min.z = (std::min)(aabb2.min.z, aabb2.max.z);
-		aabb2.max.z = (std::max)(aabb2.min.z, aabb2.max.z);
+
 
 		//当たり判定
-		if (IsCollision(aabb1,aabb2) == true)
+		if (IsCollision(aabb1,Sphere1) == true)
 		{
 			aabb1.color = RED;
 		}
@@ -125,10 +120,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		ImGui::DragFloat3("CameraTranslate", &cameraTranslate.x, 0.01f);
 		ImGui::DragFloat3("CameraRotate", &cameraRotate.x, 0.01f);
-	/*
+	
 		ImGui::Text("sphere");
 		ImGui::DragFloat3("sphere1Center", &Sphere1.center.x, 0.01f);
-		ImGui::DragFloat("sphere1Radius", &Sphere1.radius, 0.01f);*/
+		ImGui::DragFloat("sphere1Radius", &Sphere1.radius, 0.01f);
 
 		ImGui::Text("AABB");
 		ImGui::DragFloat3("aabb1.min", &aabb1.min.x, 0.01f);
@@ -169,8 +164,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		DrawAABB(aabb1, ViewProjectionMatirx, viewportMatrix, aabb1.color);
 
-		DrawAABB(aabb2, ViewProjectionMatirx, viewportMatrix, aabb2.color);
-
+		
 
 		////線分
 		//Novice::DrawLine(int(start.x), int(start.y), int(end.x), int(end.y), segment.color);
@@ -185,8 +179,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		////平面
 		//DrawPlane(plane, ViewProjectionMatirx, viewportMatrix);
 
-		////球
-		//DrawSphere(Sphere1, ViewProjectionMatirx, viewportMatrix, Sphere1.color);
+		//球
+		DrawSphere(Sphere1, ViewProjectionMatirx, viewportMatrix, Sphere1.color);
 
 
 		///
