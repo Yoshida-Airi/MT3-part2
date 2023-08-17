@@ -19,6 +19,7 @@ struct Segment
 {
 	Vector3 origin;
 	Vector3 diff;
+	uint32_t color;
 };
 
 struct Plane
@@ -31,6 +32,7 @@ struct Plane
 //当たり判定
 bool IsCollision(const Sphere& s1, const Sphere& s2);
 bool IsCollision(const Sphere& sphere, const Plane& plane);
+bool IsCollision(const Segment& segment, const Plane& plane);
 
 //加算
 Vector3 Add(const Vector3& v1, const Vector3& v2);

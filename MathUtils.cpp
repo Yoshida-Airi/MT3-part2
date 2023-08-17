@@ -859,3 +859,26 @@ bool IsCollision(const Sphere& sphere, const Plane& plane)
 	
 	return false;
 }
+
+
+bool IsCollision(const Segment& segment, const Plane& plane) {
+
+	//まず垂直判定を行うために、法線と線の内積を求める
+	float dot = Dot(plane.normal, segment.diff);
+
+	// 垂直=平行であるので、衝突しているはずがない
+	if (dot == 0.0f) {
+		return false;
+	}
+
+	// tを求める
+	float t = (plane.distance - Dot(segment.origin, plane.normal)) / dot;
+
+	// tの値と線の種類によって衝突しているかを判断する
+	if (t <= 1.0f && t >= 0.0f)
+	{
+		return true;
+	}
+	return false;
+
+}

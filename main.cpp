@@ -28,8 +28,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	Segment segment
 	{
-		{-2.0f,-1.0f,0.0f},
-		{3.0f,2.0f,2.0f}
+		{-0.45f,0.41f,0.0f},
+		{1.0f,0.58f,0.0f},
+		WHITE
 	};
 
 	
@@ -72,26 +73,37 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		Matrix4x4 ViewProjectionMatirx = Multiply(worldMatrix, Multiply(viewMatrix, projectionMatrix));
 		Matrix4x4 viewportMatrix = MakeViewportMatrix(0, 0, float(kWindowWidth), float(kWindowHeight), 0.0f, 1.0f);
 
+
+		//線分
+		Vector3 start = Transform(Transform(segment.origin, ViewProjectionMatirx), viewportMatrix);
+		Vector3 end = Transform(Transform(Add(segment.origin, segment.diff), ViewProjectionMatirx), viewportMatrix);
+
+
 		//当たり判定
-		if (IsCollision(Sphere1, plane) == true)
+		if (IsCollision(segment, plane) == true)
 		{
-			Sphere1.color = RED;
+			segment.color = RED;
 		}
 		else
 		{
-			Sphere1.color = WHITE;
+			segment.color = WHITE;
 		}
 		
 		
 		
 
 		ImGui::Begin("Window");
+
 		ImGui::DragFloat3("CameraTranslate", &cameraTranslate.x, 0.01f);
 		ImGui::DragFloat3("CameraRotate", &cameraRotate.x, 0.01f);
-	
+	/*
 		ImGui::Text("sphere");
 		ImGui::DragFloat3("sphere1Center", &Sphere1.center.x, 0.01f);
-		ImGui::DragFloat("sphere1Radius", &Sphere1.radius, 0.01f);
+		ImGui::DragFloat("sphere1Radius", &Sphere1.radius, 0.01f);*/
+
+		ImGui::Text("line");
+		ImGui::DragFloat3("Segment.Origine", &segment.origin.x, 0.01f);
+		ImGui::DragFloat3("Segment.Diff", &segment.diff.x, 0.01f);
 		
 		ImGui::Text("plane");
 		ImGui::DragFloat3("Plane.Normal", &plane.normal.x, 0.01f);
@@ -115,10 +127,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//グリッド線
 		DrawGrid(ViewProjectionMatirx, viewportMatrix);
 
+		//線分
+		Novice::DrawLine(int(start.x), int(start.y), int(end.x), int(end.y), segment.color);
+
+		//平面
 		DrawPlane(plane, ViewProjectionMatirx, viewportMatrix);
 
-		//球
-		DrawSphere(Sphere1, ViewProjectionMatirx, viewportMatrix, Sphere1.color);
+		////球
+		//DrawSphere(Sphere1, ViewProjectionMatirx, viewportMatrix, Sphere1.color);
 
 
 		///
