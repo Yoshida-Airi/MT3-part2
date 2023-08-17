@@ -43,13 +43,23 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	};
 
 
-
 	Plane plane
 	{
 		{0.0f,1.0f,0.0f},
 		1.0f,
 		WHITE
 	};
+
+	AABB aabb1;
+	AABB aabb2;
+
+	aabb1.min = { -0.5f,-0.5f,-0.5f };
+	aabb1.max = { 0.0f,0.0f,0.0f };
+	aabb1.color = WHITE;
+
+	aabb2.min = { 0.2f,0.2f,0.2f };
+	aabb2.max = { 1.0f,1.0f,1.0f };
+	aabb2.color = WHITE;
 
 	Triangle triangle;
 	triangle.vertices[0] = { -1.0f,0.0f,0.0f };
@@ -82,15 +92,28 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		Vector3 start = Transform(Transform(segment.origin, ViewProjectionMatirx), viewportMatrix);
 		Vector3 end = Transform(Transform(Add(segment.origin, segment.diff), ViewProjectionMatirx), viewportMatrix);
 
+		aabb1.min.x = (std::min)(aabb1.min.x, aabb1.max.x);
+		aabb1.max.x = (std::max)(aabb1.min.x, aabb1.max.x);
+		aabb1.min.y = (std::min)(aabb1.min.y, aabb1.max.y);
+		aabb1.max.y = (std::max)(aabb1.min.y, aabb1.max.y);
+		aabb1.min.z = (std::min)(aabb1.min.z, aabb1.max.z);
+		aabb1.max.z = (std::max)(aabb1.min.z, aabb1.max.z);
+
+		aabb2.min.x = (std::min)(aabb2.min.x, aabb2.max.x);
+		aabb2.max.x = (std::max)(aabb2.min.x, aabb2.max.x);
+		aabb2.min.y = (std::min)(aabb2.min.y, aabb2.max.y);
+		aabb2.max.y = (std::max)(aabb2.min.y, aabb2.max.y);
+		aabb2.min.z = (std::min)(aabb2.min.z, aabb2.max.z);
+		aabb2.max.z = (std::max)(aabb2.min.z, aabb2.max.z);
 
 		//当たり判定
-		if (IsCollision(triangle, segment) == true)
+		if (IsCollision(aabb1,aabb2) == true)
 		{
-			segment.color = RED;
+			aabb1.color = RED;
 		}
 		else
 		{
-			segment.color = WHITE;
+			aabb1.color = WHITE;
 		}
 		
 		
@@ -105,7 +128,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		ImGui::DragFloat3("sphere1Center", &Sphere1.center.x, 0.01f);
 		ImGui::DragFloat("sphere1Radius", &Sphere1.radius, 0.01f);*/
 
-		ImGui::Text("triangle");
+		ImGui::Text("AABB");
+		ImGui::DragFloat3("aabb1.min", &aabb1.min.x, 0.01f);
+		ImGui::DragFloat3("aabb1.max", &aabb1.max.x, 0.01f);
+		ImGui::DragFloat3("aabb2.min", &aabb2.min.x, 0.01f);
+		ImGui::DragFloat3("aabb2.max", &aabb2.max.x, 0.01f);
+
+		/*ImGui::Text("triangle");
 		ImGui::DragFloat3("triangle.v0", &triangle.vertices[0].x, 0.01f);
 		ImGui::DragFloat3("triangle.v1", &triangle.vertices[1].x, 0.01f);
 		ImGui::DragFloat3("triangle.v2", &triangle.vertices[2].x, 0.01f);
@@ -113,7 +142,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		ImGui::Text("line");
 		ImGui::DragFloat3("Segment.Origine", &segment.origin.x, 0.01f);
 		ImGui::DragFloat3("Segment.Diff", &segment.diff.x, 0.01f);
-		
+		*/
 		/*ImGui::Text("plane");
 		ImGui::DragFloat3("Plane.Normal", &plane.normal.x, 0.01f);
 		plane.normal = Normalize(plane.normal);
@@ -136,11 +165,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//グリッド線
 		DrawGrid(ViewProjectionMatirx, viewportMatrix);
 
-		//線分
-		Novice::DrawLine(int(start.x), int(start.y), int(end.x), int(end.y), segment.color);
+		DrawAABB(aabb1, ViewProjectionMatirx, viewportMatrix, aabb1.color);
 
-		//三角形
-		DrawTriangle(triangle, ViewProjectionMatirx, viewportMatrix, WHITE);
+		DrawAABB(aabb2, ViewProjectionMatirx, viewportMatrix, aabb2.color);
+
+
+		////線分
+		//Novice::DrawLine(int(start.x), int(start.y), int(end.x), int(end.y), segment.color);
+
+
+
+		////三角形
+		//DrawTriangle(triangle, ViewProjectionMatirx, viewportMatrix, WHITE);
 
 
 

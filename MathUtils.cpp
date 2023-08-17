@@ -855,6 +855,45 @@ void DrawTriangle(const Triangle& triangle, const Matrix4x4& viewProjectionMatri
 
 }
 
+
+//AABB
+void DrawAABB(const AABB& aabb, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color)
+{
+	Vector3 vertex[8]{};
+	vertex[0] = { aabb.min.x, aabb.min.y, aabb.min.z };
+	vertex[1] = { aabb.min.x, aabb.min.y, aabb.max.z };
+	vertex[2] = { aabb.min.x, aabb.max.y, aabb.min.z };
+	vertex[3] = { aabb.max.x, aabb.min.y, aabb.min.z };
+	vertex[4] = { aabb.max.x, aabb.max.y, aabb.min.z };
+	vertex[5] = { aabb.min.x, aabb.max.y, aabb.max.z };
+	vertex[6] = { aabb.max.x, aabb.min.y, aabb.max.z };
+	vertex[7] = { aabb.max.x, aabb.max.y, aabb.max.z };
+
+	Vector3 screenVertex[8]{};
+	for (int i = 0; i < 8; i++) {
+		vertex[i] = Transform(vertex[i], viewProjectionMatrix);
+		screenVertex[i] = Transform(vertex[i], viewportMatrix);
+	}
+
+	Novice::DrawLine(int(screenVertex[0].x), int(screenVertex[0].y), int(screenVertex[1].x), int(screenVertex[1].y), color);
+	Novice::DrawLine(int(screenVertex[0].x), int(screenVertex[0].y), int(screenVertex[2].x), int(screenVertex[2].y), color);
+	Novice::DrawLine(int(screenVertex[0].x), int(screenVertex[0].y), int(screenVertex[3].x), int(screenVertex[3].y), color);
+
+	Novice::DrawLine(int(screenVertex[1].x), int(screenVertex[1].y), int(screenVertex[5].x), int(screenVertex[5].y), color);
+	Novice::DrawLine(int(screenVertex[1].x), int(screenVertex[1].y), int(screenVertex[6].x), int(screenVertex[6].y), color);
+
+	Novice::DrawLine(int(screenVertex[2].x), int(screenVertex[2].y), int(screenVertex[4].x), int(screenVertex[4].y), color);
+	Novice::DrawLine(int(screenVertex[2].x), int(screenVertex[2].y), int(screenVertex[5].x), int(screenVertex[5].y), color);
+
+	Novice::DrawLine(int(screenVertex[3].x), int(screenVertex[3].y), int(screenVertex[4].x), int(screenVertex[4].y), color);
+	Novice::DrawLine(int(screenVertex[3].x), int(screenVertex[3].y), int(screenVertex[6].x), int(screenVertex[6].y), color);
+
+	Novice::DrawLine(int(screenVertex[4].x), int(screenVertex[4].y), int(screenVertex[7].x), int(screenVertex[7].y), color);
+	Novice::DrawLine(int(screenVertex[5].x), int(screenVertex[5].y), int(screenVertex[7].x), int(screenVertex[7].y), color);
+	Novice::DrawLine(int(screenVertex[6].x), int(screenVertex[6].y), int(screenVertex[7].x), int(screenVertex[7].y), color);
+
+}
+
 bool IsCollision(const Sphere& s1, const Sphere& s2)
 {
 	//2つの弾の中心点間の距離を求める
@@ -944,4 +983,14 @@ bool IsCollision(const Triangle& triangle, const Segment& segment)
 
 }
 
+bool IsCollision(const AABB& aabb1, const AABB& aabb2)
+{
+	if ((aabb1.min.x <= aabb2.max.x && aabb1.max.x >= aabb2.min.x) &&
+		(aabb1.min.y <= aabb2.max.y && aabb1.max.y >= aabb2.min.y) &&
+		(aabb1.min.z <= aabb2.max.z && aabb1.max.z >= aabb2.min.z)
+		) {
+		return true;
+	}
+	return false;
+}
 
